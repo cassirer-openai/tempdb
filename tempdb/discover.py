@@ -1,6 +1,8 @@
 import os
 import platform
 
+from typing import Iterator, Optional, Tuple
+
 from collections import defaultdict
 from glob import glob
 from subprocess import check_output
@@ -15,7 +17,7 @@ __all__ = [
 ]
 
 
-def find_postgres_bin_dir(version=None):
+def find_postgres_bin_dir(version: Optional[object] = None) -> Optional[str]:
     """
     Try to locate the postges base directory using some heuristics.
 
@@ -33,7 +35,7 @@ def find_postgres_bin_dir(version=None):
         dirs_by_version[v].append(d)
 
     if not dirs_by_version:
-        raise RuntimeError("Unable to find any postgres installation")
+        return None
 
     ordered_dirs = sorted(dirs_by_version.items(), reverse=True)
 
@@ -53,8 +55,10 @@ def find_postgres_bin_dir(version=None):
 
         return d[0]
 
+    return None
 
-def iter_postgres_bin_dirs():
+
+def iter_postgres_bin_dirs() -> Iterator[Tuple[str, Version]]:
     """
     Use heuristics to locate as many PostgreSQL installations as possible on
     this system.
